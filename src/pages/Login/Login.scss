@@ -1,0 +1,56 @@
+main#login{
+  background-color: #12002b;
+  padding: 48px;
+  justify-content: center;
+  align-items: baseline;
+
+  & > div{
+    flex-direction: column;
+    padding: 32px;
+    background-color: white;
+
+    h1{
+      font-size: 24px;
+    }
+
+    form{
+      div.input {
+        label {
+          font-size: 16px;
+          font-weight: 700;
+
+          input {
+            width: 100%;
+            padding: 5px;
+          }
+        }
+
+        &#cac{
+          cursor: pointer;
+
+          label{
+            font-size: initial;
+            font-weight: normal;
+
+            input{
+              width: max-content;
+              float: left;
+            }
+          }
+        }
+      }
+      button{
+        cursor: pointer;
+        width: 100%;
+        padding: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-top: 1rem;
+        background-color: #00bc77;
+        color: #fff;
+        border: none;
+        text-decoration: underline;
+      }
+    }
+  }
+}

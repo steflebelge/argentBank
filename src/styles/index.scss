@@ -8,6 +8,28 @@ body {
     font-family: Avenir, Helvetica, Arial, sans-serif;
   }
 
+  div#root{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    main{
+      flex-grow: 1;
+
+      form {
+        div.input{
+          p.error{
+            font-size: 12px;
+            color: red;
+            margin: 0;
+            font-weight: normal;
+            margin-bottom: 10px;
+          }
+        }
+      }
+    }
+  }
+
   .flexContainer {
     display: flex;
     align-items: center;

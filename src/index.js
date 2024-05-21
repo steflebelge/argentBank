@@ -6,7 +6,7 @@ import Header from "./layout/Header/Header";
 import Footer from "./layout/Footer/Footer";
 import Home from "./pages/Home/Home";
 import './styles/responsive.scss';
-
+import Login from "./pages/Login/Login";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -16,7 +16,7 @@ root.render(
           <Header/>
           <Routes>
               <Route path="/" element={<Home/>}/>
-              {/*<Route path="/" element={<Login/>}/>*/}
+              <Route path="/login" element={<Login/>}/>
               {/*<Route path="/" element={<Dashboard/>}/>*/}
               {/*<Route path="*" element={<Error/>}/>*/}
           </Routes>

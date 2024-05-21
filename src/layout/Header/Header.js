@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons'
 
 function Header() {
-    // const location = useLocation();
-
     return (
         <header className={"flexContainer"}>
-            <img src={logo} alt="Logo ArgentBank"/>
+            <Link to="/">
+                <img src={logo} alt="Logo ArgentBank"/>
+            </Link>
             <nav>
                 <Link to="/Login">
                     <FontAwesomeIcon icon={faCircleUser} />
