@@ -3,20 +3,43 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import {validateForm} from "../../utils/formValidator";
 import {useLoginMutation} from "../../utils/api";
+import {useDispatch, useSelector} from "react-redux";
+import {setEmail, setPassword, setToken} from "../../features/user/userSlice";
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
-    const [loginUser, { isLoading, error, data }] = useLoginMutation();
+    const [loginUser, {isLoading, error, data}] = useLoginMutation();
+    const email = useSelector((state) => state.user.email);
+    const password = useSelector((state) => state.user.password);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleEmailChange = (e) => {
+        dispatch(setEmail(e.target.value));
+    };
+
+    const handlePasswordChange = (e) => {
+        dispatch(setPassword(e.target.value));
+    };
 
     const handleLogin = async () => {
-        debugger
         try {
-            // await loginUser({userMail, userPwd}).unwrap();
-            debugger
-            // Gérer le succès de la connexion
+            const response = await loginUser({email, password}).unwrap();
+
+            if (!response.body?.token)
+                throw new Error();
+
+            dispatch(setToken(response.body.token));
+            console.log("token : " + response.body.token);
+            navigate('/profil');
         } catch (err) {
-            // Gérer les erreurs
-            console.error('Failed to login: ', err);
-            debugger
+            // Gestion des cas d'erreurs
+            let error = "Une erreur est survenue";
+
+            if (err.data?.message)
+                error = err.data.message;
+
+            alert(error);
         }
     };
 
@@ -31,10 +54,10 @@ function Login() {
                         <label>
                             Username
                             <input
-                                // value={userMail || ''}
-                                // onChange={handleInputChange}
+                                value={email}
+                                onChange={handleEmailChange}
                                 required
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
                                 type="mail"/>
                             <p className="error"></p>
                         </label>
@@ -43,8 +66,8 @@ function Login() {
                         <label>
                             Password
                             <input
-                                // value={userPwd || ''}
-                                // onChange={handleInputChange}
+                                value={password}
+                                onChange={handlePasswordChange}
                                 required
                                 type="password"
                                 minLength={3}/>

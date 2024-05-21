@@ -26,33 +26,6 @@ function validateForm() {
         }
     });
 
-    // //verification que les CGU ont bien ete acceptée
-    // if (!form.querySelector('input[type="checkbox"]').checkValidity()) {
-    //     isValid = false;
-    //     errorInField(document.querySelector('input[type="checkbox"]'));
-    // }
-
-    //si le formulaire est valide, on recupere puis prepare les données pour un envoi au back end
-    // et on affiche le message de confirmation
-    if (isValid) {
-        //recuperation du FormData correspondant au form
-        let formData = new FormData(form);
-
-        //preparation de l'objet Json a envoyer via xhr/fetch
-        let jsonData = {};
-
-        //iteration sur les entrees du formulaire pour completer la data a envoyer
-        for(const [key, value] of formData.entries()){
-            jsonData[key] = value;
-        }
-
-        //transforme le json en string pour envoi via xhr/fetch
-        let dataToSend = JSON.stringify(jsonData);
-
-        //envoi du formulaire
-        alert('todo');
-    }
-
     return isValid;
 }
 
