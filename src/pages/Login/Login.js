@@ -49,7 +49,7 @@ function Login() {
                 <FontAwesomeIcon icon={faCircleUser}/>
                 <h1>Sign In</h1>
 
-                <form action="#">
+                <form>
                     <div className="input">
                         <label>
                             Username
@@ -77,11 +77,10 @@ function Login() {
                     <div id="cac" className="input">
                         <label>
                             Remember me
-                            <input required type="checkbox"/>
-                            <p className="error"></p>
+                            <input type="checkbox"/>
                         </label>
                     </div>
-                    <button onClick={() => {
+                    <button type="button" onClick={() => {
                         validateForm() && handleLogin()
                     }}>Sign In
                     </button>

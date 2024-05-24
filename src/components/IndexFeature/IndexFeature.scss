@@ -1,0 +1,13 @@
+div.IndexFeature{
+  width: inherit;
+  padding: 40px;
+  flex-direction: column;
+  text-align: center;
+
+  img{
+    width: 100px;
+    padding: 15px;
+    border: 10px solid #00bc77;
+    border-radius: 50%;
+  }
+}

@@ -6,7 +6,8 @@ function validateForm() {
     //réinitialise les erreurs du formulaire
     //On pré remplit les content des formData avec " "
     form.querySelectorAll("div.input").forEach(function (divTmp) {
-        divTmp.querySelector('p.error').innerText="";
+        if(divTmp.querySelector('p.error'))
+            divTmp.querySelector('p.error').innerText="";
     });
 
     //parcours des input.text-control + verification de leur validité
