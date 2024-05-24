@@ -25,6 +25,20 @@
 }
 
 
+@media screen and (max-width: 550px) {
+  #profil {
+    div.accountBalance {
+      flex-direction: column;
+      text-align: center;
+      gap: 20px;
+
+      button {
+        margin-right: auto;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 500px) {
   #home {
     section:first-of-type {

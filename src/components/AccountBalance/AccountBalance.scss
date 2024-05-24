@@ -1,0 +1,28 @@
+div.accountBalance{
+  background-color: #fff;
+  width: 75%;
+  display: flex;
+  margin: auto;
+  padding: 20px;
+
+  p,
+  h2{
+    margin: 3px 0;
+  }
+  h2{
+    font-size: 40px;
+  }
+
+  button{
+    height: max-content;
+    margin: auto;
+    margin-right: 0;
+    padding: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-color: #00bc77;
+    background-color: #00bc77;
+    color: #fff;
+  }
+
+}
