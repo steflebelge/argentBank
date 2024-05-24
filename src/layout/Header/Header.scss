@@ -5,12 +5,33 @@ header {
     width: 200px;
   }
 
+  svg {
+    margin-right: 0.5rem;
+  }
+
   a {
     font-weight: bold;
     text-decoration: none;
+  }
 
-    svg {
-      margin-right: 0.5rem;
+  nav{
+    display: flex;
+    gap: 8px;
+
+    & > *{
+      font-size: 16px;
+      &:hover{
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+
+    button{
+      height: fit-content;
+      margin: auto;
+      border: none;
+      background-color: #fff0;
+      font-weight: bold;
     }
   }
 }

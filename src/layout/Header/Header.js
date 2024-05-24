@@ -1,15 +1,20 @@
 import "./Header.scss";
 import logo from "../../assets/img/logo.png";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleUser, faRightFromBracket} from '@fortawesome/free-solid-svg-icons'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../../features/user/userSlice";
 
 function Header() {
     const firstname = useSelector((state) => state.user.firstname);
+    // console.log("firstnameRedux : " + firstname);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     function handleLogout() {
-        alert('todo');
+        dispatch(logout());
+        navigate('/');
     }
 
     return (
@@ -20,13 +25,13 @@ function Header() {
             <nav>
                 {firstname ? (
                     <>
-                        <p>
+                        <Link to={"/profil"}>
                             <FontAwesomeIcon icon={faCircleUser}/>
                             {firstname}
-                        </p>
+                        </Link>
                         <button onClick={handleLogout}>
                             <FontAwesomeIcon icon={faRightFromBracket}/>
-                            Sign out
+                            Sign Out
                         </button>
                     </>
                 ) : (

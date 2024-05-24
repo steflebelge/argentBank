@@ -2,17 +2,26 @@ import "./Login.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import {validateForm} from "../../utils/formValidator";
-import {useLoginMutation} from "../../utils/api";
+import {useLoginMutation, useProfileMutation} from "../../utils/api";
 import {useDispatch, useSelector} from "react-redux";
-import {setEmail, setPassword, setToken} from "../../features/user/userSlice";
-import { useNavigate } from 'react-router-dom';
+import {setEmail, setPassword, setToken, setFirstname, setLastname} from "../../features/user/userSlice";
+import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 
 function Login() {
-    const [loginUser, {isLoading, error, data}] = useLoginMutation();
+    const [loginUser, {isLoadingLogin, errorLogin, dataLogin}] = useLoginMutation();
+    const [profileUser, {isLoadingProfile, errorProfile, dataProfile}] = useProfileMutation();
     const email = useSelector((state) => state.user.email);
     const password = useSelector((state) => state.user.password);
+    const firstname = useSelector((state) => state.user.firstname);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    //verification si user logué, si oui -> profile
+    useEffect(() => {
+        if(firstname)
+            navigate('/profil');
+    }, []);
 
     const handleEmailChange = (e) => {
         dispatch(setEmail(e.target.value));
@@ -24,13 +33,21 @@ function Login() {
 
     const handleLogin = async () => {
         try {
-            const response = await loginUser({email, password}).unwrap();
+            const responseLogin = await loginUser({email, password}).unwrap();
 
-            if (!response.body?.token)
+            if (!responseLogin.body?.token)
                 throw new Error();
 
-            dispatch(setToken(response.body.token));
-            console.log("token : " + response.body.token);
+            dispatch(setToken(responseLogin.body.token));
+            // console.log("token : " + responseLogin.body.token);
+
+            //recuperation de la data utilisateur
+            let responseProfile = await profileUser({}).unwrap();
+            if(responseProfile.status === 200) {
+                dispatch(setFirstname(responseProfile.body.firstName));
+                dispatch(setLastname(responseProfile.body.lastName));
+            }
+
             navigate('/profil');
         } catch (err) {
             // Gestion des cas d'erreurs
