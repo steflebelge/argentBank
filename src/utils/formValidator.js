@@ -20,7 +20,7 @@ function validateForm() {
             // Expression régulière pour valider l'email
             let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            if (!emailRegex.test(inputTmp.value)){
+            if (!emailRegex.test(inputTmp.value.toLowerCase())){
                 isValid = false;
                 errorInField(inputTmp);
             }

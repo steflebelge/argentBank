@@ -5,13 +5,14 @@ import "./Profil.scss";
 import IndexFeature from "../../components/IndexFeature/IndexFeature";
 import AccountBalance from "../../components/AccountBalance/AccountBalance";
 import {validateForm} from "../../utils/formValidator";
-import {useUpdateProfileMutation} from "../../utils/api";
+import {useProfileMutation, useUpdateProfileMutation} from "../../utils/api";
 import {setFirstname, setLastname} from "../../features/user/userSlice";
 
 function Profil() {
     const firstname = useSelector((state) => state.user.firstname);
     const lastname = useSelector((state) => state.user.lastname);
-    const [profileUser, {isLoadingProfile, errorProfile, dataProfile}] = useUpdateProfileMutation();
+    const [updateProfileUser, {updateisLoadingProfile, updateerrorProfile, updatedataProfile}] = useUpdateProfileMutation();
+    const [profileUser, {isLoadingProfile, errorProfile, dataProfile}] = useProfileMutation();
     const navigate = useNavigate();
     const [isFormActive, setIsFormActive] = useState(false);
     const accountsInfos = [
@@ -47,17 +48,19 @@ function Profil() {
             firstName: "",
             lastName: "",
         }
+
         document.forms[0].querySelectorAll('input').forEach(function (inputTmp) {
             dataToSend[inputTmp.id] = inputTmp.value;
         });
 
         try {
-            await profileUser(dataToSend).unwrap();
+            await updateProfileUser(dataToSend).unwrap();
             //recuperation de la data utilisateur
             let responseProfile = await profileUser({}).unwrap();
             if(responseProfile.status === 200) {
                 dispatch(setFirstname(responseProfile.body.firstName));
                 dispatch(setLastname(responseProfile.body.lastName));
+                setIsFormActive(!isFormActive);
             }
         } catch (error) {
             console.error('Failed to update resource:', error);
@@ -72,11 +75,11 @@ function Profil() {
                         <h1>Welcome back <br/></h1>
                         <span>
                             <div className="input">
-                                <input id="firstName" minLength={2} type="text" placeholder={firstname}/>
+                                <input id="firstName" required minLength={2} type="text" placeholder={firstname}/>
                                 <p className="error"></p>
                             </div>
                             <div className="input">
-                                <input id="lastName" minLength={2} type="text" placeholder={lastname}/>
+                                <input id="lastName" required minLength={2} type="text" placeholder={lastname}/>
                                 <p className="error"></p>
                             </div>
                         </span>
