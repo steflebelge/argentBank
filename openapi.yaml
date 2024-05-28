@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: Argent Bank - Phase 2
+  description: |-
+    L'api doit permettre aux utilisateurs :
+    - de visualiser toutes leurs transactions pour le mois en cours, groupées par compte
+    - de visualiser les détails d'une transaction dans une autre vue
+    - d'ajouter, de modifier ou de supprimer des informations sur une transaction
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001
+tags:
+  - name: Transactions
+    description: Everything about your Transactions
+  - name: Transaction
+    description: Everything about a Transaction
+paths:
+  /monthAccountInfos:
+    get:
+      tags:
+        - Transactions
+      summary: Get monthly transactions
+      description: Get monthly transactions by account type
+      operationId: getMonthlyAccountInfos
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                $ref: '#/components/schemas/Transaction'
+            application/xml:
+              schema:
+                type: array
+                items:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Not logged in
+        '404':
+          description: User not found
+      security:
+        - transactions_auth:
+            - read:Transactions
+  /transactionInfos:
+    post:
+      tags:
+        - Transaction
+      summary: Get a transaction
+      description: Get detail of a specific transaction
+      parameters:
+        - in: query
+          name: idTransaction
+          description: Transaction ID
+          required: true
+          schema:
+            type: integer
+      operationId: getTransactionInfos
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Not logged in
+        '404':
+          description: Transaction not found
+      security:
+        - transactions_auth:
+            - read:Transaction
+  /updateTransaction:
+    put:
+      tags:
+        - Transaction
+      summary: Update a transaction
+      description: Update details of a specific transaction
+      parameters:
+        - in: query
+          name: transaction
+          description: Transaction Infos
+          required: true
+          schema:
+            $ref: '#/components/schemas/Transaction'
+      operationId: updateTransactionInfos
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Not logged in
+        '404':
+          description: Transaction not found
+      security:
+        - transactions_auth:
+            - write:Transaction
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+          description: Unique identifier for the transaction
+        userId:
+          type: integer
+          format: int64
+          example: 198772
+          description: Identifier for the user associated with the transaction
+        accountType:
+          type: integer
+          format: int64
+          example: 1234
+          description: Type of the account
+        dateTime:
+          type: string
+          format: date-time
+          description: Date and time of the transaction
+        amount:
+          type: integer
+          format: int32
+          example: 7
+          description: Amount of the transaction
+        description:
+          type: string
+          description: Description of the transaction
+        transactionType:
+          type: string
+          description: Type of the transaction
+        note:
+          type: string
+          description: Additional notes for the transaction
+        categorie:
+          type: string
+          description: Category of the transaction
+      xml:
+        name: transaction
+    ApiResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Transaction'
+  requestBodies:
+    Transaction:
+      description: Transaction object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+  securitySchemes:
+    transactions_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://transactions.swagger.io/oauth/authorize
+          scopes:
+            write:transaction: New transaction in your account
+            edit:transaction: Edit transaction in your account
+            delete:transaction: Delete transaction in your account
+            read:transaction: Read your transactions
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
