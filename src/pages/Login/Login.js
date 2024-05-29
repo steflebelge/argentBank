@@ -1,12 +1,13 @@
 import "./Login.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
-import {validateForm} from "../../utils/formValidator";
 import {useLoginMutation, useProfileMutation} from "../../utils/api";
 import {useDispatch, useSelector} from "react-redux";
 import {setEmail, setPassword, setToken, setFirstname, setLastname} from "../../features/user/userSlice";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+import {useForm} from 'react-hook-form';
+
 
 function Login() {
     const [loginUser, {isLoadingLogin, errorLogin, dataLogin}] = useLoginMutation();
@@ -16,14 +17,17 @@ function Login() {
     const firstname = useSelector((state) => state.user.firstname);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const {register, handleSubmit, formState: {errors}} = useForm();
+
 
     //verification si user logué, si oui -> profile
     useEffect(() => {
-        if(firstname)
+        if (firstname)
             navigate('/profil');
     }, []);
 
     const handleEmailChange = (e) => {
+        debugger
         dispatch(setEmail(e.target.value));
     };
 
@@ -31,9 +35,9 @@ function Login() {
         dispatch(setPassword(e.target.value));
     };
 
-    const handleLogin = async () => {
+    async function handleLogin(data) {
         try {
-            const responseLogin = await loginUser({email, password}).unwrap();
+            const responseLogin = await loginUser(data).unwrap();
 
             if (!responseLogin.body?.token)
                 throw new Error();
@@ -43,7 +47,7 @@ function Login() {
 
             //recuperation de la data utilisateur
             let responseProfile = await profileUser({}).unwrap();
-            if(responseProfile.status === 200) {
+            if (responseProfile.status === 200) {
                 dispatch(setFirstname(responseProfile.body.firstName));
                 dispatch(setLastname(responseProfile.body.lastName));
             }
@@ -58,7 +62,7 @@ function Login() {
 
             alert(error);
         }
-    };
+    }
 
     return (
         <main id="login" className="flexContainer">
@@ -66,28 +70,45 @@ function Login() {
                 <FontAwesomeIcon icon={faCircleUser}/>
                 <h1>Sign In</h1>
 
-                <form>
-                    <div className="input">
+                <form onSubmit={handleSubmit(handleLogin)}>
+                <div className="input">
                         <label>
                             Username
                             <input
-                                value={email}
-                                onChange={handleEmailChange}
-                                required
-                                type="mail"/>
-                            <p className="error"></p>
+                                placeholder="email"
+                                defaultValue={email}
+                                type="text"
+                                {...register('email', {
+                                    required: true,
+                                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                                })}
+                            />
+                            {errors.email && errors.email.type === "required" && (
+                                <p className="error">Champs requis</p>
+                            )}
+                            {errors.email && errors.email.type === "pattern" && (
+                                <p className="error">Veuillez vérifier votre email</p>
+                            )}
                         </label>
                     </div>
                     <div className="input">
                         <label>
                             Password
                             <input
-                                value={password}
-                                onChange={handlePasswordChange}
-                                required
+                                placeholder="password"
+                                defaultValue={password}
                                 type="password"
-                                minLength={3}/>
-                            <p className="error"></p>
+                                {...register('password', {
+                                    required: true,
+                                    minLength: 3,
+                                })}
+                            />
+                            {errors.password && errors.password.type === "required" && (
+                                <p className="error">Champs requis</p>
+                            )}
+                            {errors.password && errors.password.type === "minLength" && (
+                                <p className="error">Longueur minimale de trois caractères</p>
+                            )}
                         </label>
                     </div>
                     <div id="cac" className="input">
@@ -96,10 +117,7 @@ function Login() {
                             <input type="checkbox"/>
                         </label>
                     </div>
-                    <button type="button" onClick={() => {
-                        validateForm() && handleLogin()
-                    }}>Sign In
-                    </button>
+                    <button type="submit">Sign In</button>
                 </form>
             </div>
         </main>

@@ -1,17 +1,20 @@
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import {useForm} from 'react-hook-form';
 import "./Profil.scss";
-import IndexFeature from "../../components/IndexFeature/IndexFeature";
 import AccountBalance from "../../components/AccountBalance/AccountBalance";
-import {validateForm} from "../../utils/formValidator";
 import {useProfileMutation, useUpdateProfileMutation} from "../../utils/api";
 import {setFirstname, setLastname} from "../../features/user/userSlice";
 
 function Profil() {
     const firstname = useSelector((state) => state.user.firstname);
     const lastname = useSelector((state) => state.user.lastname);
-    const [updateProfileUser, {updateisLoadingProfile, updateerrorProfile, updatedataProfile}] = useUpdateProfileMutation();
+    const [updateProfileUser, {
+        updateisLoadingProfile,
+        updateerrorProfile,
+        updatedataProfile
+    }] = useUpdateProfileMutation();
     const [profileUser, {isLoadingProfile, errorProfile, dataProfile}] = useProfileMutation();
     const navigate = useNavigate();
     const [isFormActive, setIsFormActive] = useState(false);
@@ -36,6 +39,7 @@ function Profil() {
         },
     ];
     const dispatch = useDispatch();
+    const {register, handleSubmit, formState: {errors}} = useForm();
 
     //verification si user logué, si oui -> profile
     useEffect(() => {
@@ -43,21 +47,12 @@ function Profil() {
             navigate('/login');
     }, []);
 
-    async function handleUpdateProfile() {
-        let dataToSend = {
-            firstName: "",
-            lastName: "",
-        }
-
-        document.forms[0].querySelectorAll('input').forEach(function (inputTmp) {
-            dataToSend[inputTmp.id] = inputTmp.value;
-        });
-
+    async function handleUpdateProfile(data) {
         try {
-            await updateProfileUser(dataToSend).unwrap();
+            await updateProfileUser(data).unwrap();
             //recuperation de la data utilisateur
             let responseProfile = await profileUser({}).unwrap();
-            if(responseProfile.status === 200) {
+            if (responseProfile.status === 200) {
                 dispatch(setFirstname(responseProfile.body.firstName));
                 dispatch(setLastname(responseProfile.body.lastName));
                 setIsFormActive(!isFormActive);
@@ -68,25 +63,49 @@ function Profil() {
     }
 
     return (
-        <div id="profil">
+        <main id="profil">
             <section id="userInfos">
                 {isFormActive ? (
-                    <form>
+                    <form onSubmit={handleSubmit(handleUpdateProfile)}>
                         <h1>Welcome back <br/></h1>
                         <span>
                             <div className="input">
-                                <input id="firstName" required minLength={2} type="text" placeholder={firstname}/>
-                                <p className="error"></p>
+                                <input
+                                    placeholder="firstname"
+                                    defaultValue={firstname}
+                                    type="text"
+                                    {...register('firstName', {
+                                        required: true,
+                                        minLength: 2,
+                                    })}
+                                />
+                                {errors.firstName && errors.firstName.type === "required" && (
+                                    <p className="error">Champs requis</p>
+                                )}
+                                {errors.firstName && errors.firstName.type === "minLength" && (
+                                    <p className="error">Longueur minimale de deux caractères</p>
+                                )}
                             </div>
                             <div className="input">
-                                <input id="lastName" required minLength={2} type="text" placeholder={lastname}/>
-                                <p className="error"></p>
+                                <input
+                                    placeholder="lastName"
+                                    defaultValue={lastname}
+                                    type="text"
+                                    {...register('lastName', {
+                                        required: true,
+                                        minLength: 2,
+                                    })}
+                                />
+                                {errors.lastName && errors.lastName.type === "required" && (
+                                    <p className="error">Champs requis</p>
+                                )}
+                                {errors.lastName && errors.lastName.type === "minLength" && (
+                                    <p className="error">Longueur minimale de deux caractères</p>
+                                )}
                             </div>
                         </span>
                         <span>
-                            <button onClick={() => {
-                                validateForm() && handleUpdateProfile()
-                            }} type="button">Save</button>
+                            <button type="submit">Save</button>
                             <button onClick={() => setIsFormActive(!isFormActive)} type="button">Cancel</button>
                         </span>
                     </form>
@@ -110,7 +129,7 @@ function Profil() {
                     ))
                 )}
             </section>
-        </div>
+        </main>
     );
 }
 
